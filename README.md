@@ -136,4 +136,70 @@ Big thanks for [@fear-rush](https://github.com/fear-rush) for insight and optimi
 
 Feel free to contribute to the ore-miner script or build on top of it to make it more efficient, run smoothly, or resolve any issues.
 
+## Setting Up CLI for Mining $ORE on a VPS
+For those looking to run their mining operations continuously, setting up on a Virtual Private Server (VPS) is advisable. This ensures your mining doesn’t get interrupted by local hardware limitations or connectivity issues.
+
+### VPS Preparation
+Install the Solana CLI on your VPS with the command provided by Solana’s release page. I recommend the Vultr VPS. It costs $7.20 and runs perfectly. Make sure to choose a Linux VPS and the “Cloud Compute – shared CPU”. Make sure the Ubuntu version in 22.04 LTS too.
+
+
+### Remote Server Access
+Next, to connect to and manage your VPS, mobaxterm.mobatek.net is the tool of choice. It simplifies remote server management, allowing you to access your VPS files and terminal seamlessly. With MobaXterm installed, initiate a new session and input your VPS’s IP address provided by Vultr. Log in as root using the password Vultr supplies, granting you full access to the server.
+
+### Installing Rust
+Rust is a prerequisite for many Solana and blockchain-related tools due to its performance and safety. Install Rust on your server with the following command:
+
+curl https://sh.rustup.rs -sSf | sh
+
+### Installing Solana CLI
+The Solana CLI is your gateway to interacting with the Solana blockchain. Install it using the command:
+
+sh -c "$(curl -sSfL https://release.solana.com/v1.18.4/install)"
+
+### Re-Login
+After installing the Solana CLI, you’ll need to log out of your VPS and log back in to refresh your session and apply the new settings. Simply close the MobaXterm window and reconnect.
+
+### Creating a New Solana Key
+To interact with the Solana blockchain, you’ll need a keypair. Create one with solana-keygen new. Choose a unique string as suggested, although the string itself isn’t used in the key generation process.
+
+### Accessing Your Secret Key
+Navigate to the .config/solana folder and open the id.json file. This file contains your secret key, which can be imported into Solana wallets like Phantom or Backpack, providing access to your private key.
+
+### Funding Your Wallet
+Before starting to mine, you’ll need some SOL in your wallet to cover the transaction fees associated with mining. Send between 0.05 to 0.1 SOL to your wallet to ensure you’re covered.
+
+### Installing the ORE CLI
+The ORE CLI is the core mining software for $ORE. Install it with the command:
+
+cargo install ore-cli
+This step may take a few minutes, so now’s a good time for a coffee break!
+
+### Managing Crashes with PM2
+To ensure your mining operation runs smoothly without interruptions, use PM2, a process manager for Node.js. Install PM2 globally with:
+
+npm install pm2 -g
+
+### Configuring Your Miner
+Create a .json file named mine.json with the following configuration to set up your miner. This file will include necessary details like the RPC endpoint and your keypair file.
+
+{
+  "name": "ore_miner",
+  "script": "ore",
+  "args": ["--rpc", "https://api.mainnet-beta.solana.com", "--keypair", "PATH_TO_YOUR_KEYPAIR", "--other", "args"]
+}
+Adjust the "args" as needed to match your setup.
+
+### Starting the Miner
+With everything set up, start your miner using PM2:
+
+pm2 start mine.json
+To monitor your mining operation, pm2 logs will display real-time logs.
+
+### Managing Your Mining Rewards
+Finally, to check your balance and claim your mined $ORE, use the following commands:
+
+To view rewards: ore --keypair /root/.config/solana/id.json rewards
+To claim rewards: ore --keypair /root/.config/solana/id.json claim <amount>
+This guide should have equipped you with all the necessary steps to start CLI mining $ORE on Solana. Remember, the blockchain and crypto mining landscapes are always evolving, so stay engaged with the community for the latest
+
 
